@@ -23,8 +23,11 @@ odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
 odp.parking.meckauer.id=OffStreetParking-Pkpd-787878
 ```
 
-# Build & Run
+## Build & Run
 ```bash
     mvn clean package
     java -jar run target/odp-adapter-1.0-SNAPSHOT.jar
 ```
+
+## License & Contribution
+This software is published under the AGPLv3 and the license agreement can be found [here](/LICENSE). Pull requests are very much appreciated and you contributed code will be licensed as AGPLv3 as well.
