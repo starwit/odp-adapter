@@ -53,6 +53,9 @@ public class ODPFunctions {
     @Value("${odp.parking.url}")
     private String parkingSpaceUrl;
 
+    @Value("${config.autostart}")
+    private boolean autostart;
+
     private List<OffStreetParking> parkingSpaces = new ArrayList<>();
 
     private boolean sendUpdates = false;
@@ -69,6 +72,10 @@ public class ODPFunctions {
         log.info("Starting ODP Adapter, connecting to " + parkingSpaceUrl);
         log.debug("loading mapping data");
         parseParkingSpaceMapping("ParkingSpaceMapping.json");
+        if(autostart) {
+            importParkingSpaceData();
+            sendUpdates = true;
+        }
     }
 
     public void parseParkingSpaceMapping(String mappingFilename) {
@@ -129,12 +136,15 @@ public class ODPFunctions {
     /* ********************** Updating ODP ************************ */
     @Scheduled(fixedDelay = 5000)
     private void updateParkingState() {
-        if(sendUpdates){
+        if(sendUpdates) {
+            log.debug("send updates to ODP");
             checkIfTokenIsStillValid();
             if(token != null) {
                 for (OffStreetParking ofs : parkingSpaces) {
-                    updateParkingData(ofs);
-                    sendOffStreetParkingUpdate(ofs);
+                    if(ofs.isSynched()) {
+                        updateParkingData(ofs);
+                        sendOffStreetParkingUpdate(ofs);
+                    }
                 }
             } else {
                 log.info("No valid token, can't update ODP");
@@ -142,6 +152,10 @@ public class ODPFunctions {
         }
     }
 
+    /**
+     * To be replaced by getting actual data.
+     * @param ofs
+     */
     private void updateParkingData(OffStreetParking ofs) {
         log.info("yet only fake random data");
         Random ran = new Random();
@@ -157,7 +171,7 @@ public class ODPFunctions {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(createAvailableSpotsRequestBody(ofs), headers);
         ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + ofs.getOdpID() + "/attrs", HttpMethod.PATCH, request, String.class);
-        log.info("Updated ODP with response code " + response.getStatusCode());
+        log.debug("Updated parking space " + ofs.getOdpID() + " with response code " + response.getStatusCode());
     }
 
     private String createAvailableSpotsRequestBody(OffStreetParking ofs) {
