@@ -1,0 +1,21 @@
+[
+    {
+      "analyticsId": 1,
+      "odpName": null,
+      "odpID": "OffStreetParking-Pkpd-787878",
+      "availableParkingSpots": 30,
+      "totalSpotNumber": 70,
+      "lastUpdate": null,
+      "synched": false
+    },
+    {
+      "analyticsId": 2,
+      "odpName": null,
+      "odpID": "OffStreetParking-Pkpd-787879",
+      "availableParkingSpots": 0,
+      "totalSpotNumber": 0,
+      "lastUpdate": null,
+      "synched": false
+    }
+  ]
+  

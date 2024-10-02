@@ -1,4 +1,4 @@
-package de.starwit;
+package de.starwit.odp.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,13 +10,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.starwit.odp.OffStreetParking;
-
 public class OffStreetParkingFunctions {
 
     private static Logger log = LoggerFactory.getLogger(OffStreetParkingFunctions.class);
     
-    public static OffStreetParking extractAvailableSpots(String jsonString) {
+    public static OffStreetParking extractOffstreetParking(String jsonString) {
         OffStreetParking result = new OffStreetParking();
         ObjectMapper om = new ObjectMapper();
         JsonNode rootNode;
@@ -35,16 +33,18 @@ public class OffStreetParkingFunctions {
             JsonNode nameNode = rootNode.get("name");
             if(totalSpots != null) {
                 JsonNode valueNode = nameNode.get("value");
-                result.setName(valueNode.asText());
+                result.setOdpName(valueNode.asText());
             }
             JsonNode timestampNode = rootNode.get("dateObserved");
             if(totalSpots != null) {
                 JsonNode valueNode = timestampNode.get("value");
                 LocalDateTime lastUpdate = LocalDateTime.parse(valueNode.asText(), DateTimeFormatter.ofPattern ("yyyy-MM-dd'T'HH:mm:ss'Z'"));
                 result.setLastUpdate(lastUpdate);
-            }                      
+            }
+            result.setSynched(true);
         } catch (JsonProcessingException e) {
             log.info("Can't parse available parking spots " + e.getMessage());
+            result.setSynched(false);
         } 
 
         return result;

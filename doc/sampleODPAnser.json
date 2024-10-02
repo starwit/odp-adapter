@@ -1,0 +1,162 @@
+{
+    "id": "OffStreetParking-Pkpd-787878",
+    "type": "OffStreetParking",
+    "address": {
+        "type": "StructuredValue",
+        "value": {
+            "streetAddress": "Meckauer Weg",
+            "addressLocality": "Wolfsburg",
+            "addressRegion": "Niedersachsen",
+            "postalCode": "38440",
+            "addressCountry": "DE"
+        },
+        "metadata": {}
+    },
+    "availableSpotNumber": {
+        "type": "Integer",
+        "value": 30,
+        "metadata": {}
+    },
+    "category": {
+        "type": "StructuredValue",
+        "value": [
+            "surface"
+        ],
+        "metadata": {}
+    },
+    "chargeType": {
+        "type": "StructuredValue",
+        "value": [
+            "intervalPrice"
+        ],
+        "metadata": {}
+    },
+    "contactPoint": {
+        "type": "StructuredValue",
+        "value": {
+            "telephone": "+495361123456",
+            "email": "contact@centralparkgarage.com",
+            "name": "Stadtwerke Wolfsburg",
+            "alternatePhone": "+495361123457",
+            "socialMedia": "@CentralParkGarage"
+        },
+        "metadata": {}
+    },
+    "dateObserved": {
+        "type": "Text",
+        "value": "2024-08-07T10:00:00Z",
+        "metadata": {}
+    },
+    "description": {
+        "type": "Text",
+        "value": "",
+        "metadata": {}
+    },
+    "disabledSpotNumber": {
+        "type": "Integer",
+        "value": 0,
+        "metadata": {}
+    },
+    "evSpotNumber": {
+        "type": "Integer",
+        "value": 0,
+        "metadata": {}
+    },
+    "layout": {
+        "type": "StructuredValue",
+        "value": [
+            "notCovered"
+        ],
+        "metadata": {}
+    },
+    "location": {
+        "type": "geo:json",
+        "value": {
+            "type": "Point",
+            "coordinates": [
+                10.7864659,
+                52.4241885
+            ]
+        },
+        "metadata": {}
+    },
+    "maxDailyRate": {
+        "type": "Text",
+        "value": "20 EUR/day",
+        "metadata": {}
+    },
+    "maximumHeight": {
+        "type": "Number",
+        "value": 2.1,
+        "metadata": {}
+    },
+    "maximumParkingDuration": {
+        "type": "Text",
+        "value": "Unknown",
+        "metadata": {}
+    },
+    "name": {
+        "type": "Text",
+        "value": "Meckauer Weg",
+        "metadata": {}
+    },
+    "openingHours": {
+        "type": "StructuredValue",
+        "value": {
+            "weekdays": "Mo-Fr 06:00-22:00",
+            "weekend": "Sa-So 08:00-20:00"
+        },
+        "metadata": {}
+    },
+    "owner": {
+        "type": "Text",
+        "value": "Stadt Wolfsburg",
+        "metadata": {}
+    },
+    "paymentAccepted": {
+        "type": "StructuredValue",
+        "value": [
+            "cash",
+            "credit card",
+            "mobile payment",
+            "paypal",
+            "ParkingApp"
+        ],
+        "metadata": {}
+    },
+    "priceRate": {
+        "type": "Text",
+        "value": "2 EUR/hour",
+        "metadata": {}
+    },
+    "provider": {
+        "type": "Text",
+        "value": "Stadt Wolfsburg",
+        "metadata": {}
+    },
+    "security": {
+        "type": "Text",
+        "value": "CCTV, security personnel",
+        "metadata": {}
+    },
+    "status": {
+        "type": "Text",
+        "value": "open",
+        "metadata": {}
+    },
+    "totalSpotNumber": {
+        "type": "Integer",
+        "value": 70,
+        "metadata": {}
+    },
+    "trend": {
+        "type": "Number",
+        "value": 0.05,
+        "metadata": {}
+    },
+    "womenSpotNumber": {
+        "type": "Integer",
+        "value": 0,
+        "metadata": {}
+    }
+}
