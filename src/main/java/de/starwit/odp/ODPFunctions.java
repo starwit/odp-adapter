@@ -31,7 +31,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.starwit.AuthTokenResponse;
+import de.starwit.odp.analytics.AnalyticsRepository;
+import de.starwit.odp.analytics.OccupancyDTO;
+import de.starwit.odp.model.AuthTokenResponse;
 import de.starwit.odp.model.OffStreetParking;
 import de.starwit.odp.model.OffStreetParkingFunctions;
 import jakarta.annotation.PostConstruct;

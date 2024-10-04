@@ -1,4 +1,4 @@
-package de.starwit;
+package de.starwit.odp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

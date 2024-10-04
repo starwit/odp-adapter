@@ -1,6 +1,6 @@
 # Open Data Platform Adapter
 
-This software implements an adapter to Wolfsburg's open data platform. It will update available parking spots for configured parking space
+This software implements an adapter to Wolfsburg's open data platform. It will update available parking spots for configured parking space.
 
 ## Functions
 Adapter implements the following functions:
@@ -10,6 +10,11 @@ Adapter implements the following functions:
 ## Configuration
 App can be configured via application.properties file. Just on parking area is supported and it's configuration is also done via application properties. Next to all Spring Boot config the following keys can be used:
 ```
+# base path for api
+rest.base-path=api
+# if true update starts immediately
+config.autostart=true
+
 # user name for ODP login
 odp.auth.username=meckauer 
 # password for ODP login

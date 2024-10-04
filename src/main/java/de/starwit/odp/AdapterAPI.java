@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.starwit.odp.analytics.AnalyticsRepository;
+import de.starwit.odp.analytics.OccupancyDTO;
 import de.starwit.odp.model.OffStreetParking;
 
 @RestController
 @RequestMapping("${rest.base-path}")
 public class AdapterAPI {
+
+    @Autowired
+    private AnalyticsRepository repository;
 
     private Logger log = LoggerFactory.getLogger(AdapterAPI.class);
 
@@ -60,5 +65,11 @@ public class AdapterAPI {
     public List<OffStreetParking> getParkingSpaces(){
         return functions.getParkingSpaces();
     }
-    
+
+    @GetMapping("/test")
+    public void test() {
+        var area = repository.getLatestOccupancy("american-mattress-parking-area");
+        log.info("Got " + area.toString());
+
+    }
 }
