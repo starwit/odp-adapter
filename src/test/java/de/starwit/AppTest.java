@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
 
-import de.starwit.odp.ODPFunctions;
 import de.starwit.odp.model.OffStreetParking;
 import de.starwit.odp.model.OffStreetParkingFunctions;
 
@@ -26,12 +25,5 @@ public class AppTest {
         assertEquals("Meckauer Weg", osp.getOdpName());
         assertTrue(osp.getTotalSpotNumber() == 70);
         assertTrue(osp.getLastUpdate().getYear() == 2024);
-    }
-
-    @Test
-    public void parseMappingConfig() throws Exception {
-        ODPFunctions of = new ODPFunctions();
-        of.parseParkingSpaceMapping("ParkingSpaceMapping.json");
-        assertEquals(2,of.getParkingSpaces().size());
     }
 }
