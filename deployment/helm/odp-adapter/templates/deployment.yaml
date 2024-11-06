@@ -41,9 +41,9 @@ spec:
               value: {{ .Values.odp.url | quote }}
             - name: ODP_AUTH_URL
               value: {{ .Values.odp.auth_url | quote }}
-            - name: ODP_USERNAME
+            - name: ODP_AUTH_USERNAME
               value: {{ .Values.odp.username | quote }}
-            - name: ODP_PASSWORD
+            - name: ODP_AUTH_PASSWORD
               value: {{ .Values.odp.password | quote }}
             - name: ODP_PARKINGAREAID
               value: {{ .Values.odp.parkingareaid | quote }}

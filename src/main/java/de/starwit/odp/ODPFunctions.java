@@ -90,6 +90,7 @@ public class ODPFunctions {
             response = restTemplate.postForEntity(authUrl, request, String.class);
         } catch (HttpClientErrorException e) {
             log.error("Can't get access token for user " + username + " with error: " + e.getMessage());
+            token = null;
             return;
         }
 
