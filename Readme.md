@@ -24,8 +24,10 @@ odp.auth.url=https://auth.staging.wolfsburg.digital/auth/realms/default/protocol
 
 # URL to read & update parking space data
 odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
-# ID for the one currently supported parking space
-odp.parking.meckauer.id=OffStreetParking-Pkpd-787878
+
+# Configure mapping to parking area
+odp.parkingareaid=OffStreetParking-Pkpd-787878
+analytics.observation_area=12
 ```
 
 ## Build & Run
