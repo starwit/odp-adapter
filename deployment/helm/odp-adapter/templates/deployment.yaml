@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "odp-adapter.fullname" . }}
+  labels:
+    {{- include "odp-adapter.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "odp-adapter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "odp-adapter.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SERVER_SERVLET_CONTEXT_PATH
+              value: {{ .Values.app.context_path | quote }}
+            - name: SERVER_PORT
+              value: {{ .Values.service.port | quote }}             
+            - name: ODP_PARKING_URL
+              value: {{ .Values.odp.url | quote }}
+            - name: ODP_AUTH_URL
+              value: {{ .Values.odp.auth_url | quote }}
+            - name: ODP_USERNAME
+              value: {{ .Values.odp.username | quote }}
+            - name: ODP_PASSWORD
+              value: {{ .Values.odp.password | quote }}
+            - name: ODP_PARKINGAREAID
+              value: {{ .Values.odp.parkingareaid | quote }}
+            - name: ANALYTICS_OBSERVATION_AREA
+              value: {{ .Values.odp.analytics_observation_area | quote }}
+            - name: SPRING.DATASOURCE.URL
+              value: {{ .Values.analytics_db.url | quote }}
+            - name: SPRING.DATASOURCE.USERNAME
+              value: {{ .Values.analytics_db.username | quote }}
+            - name: SPRING.DATASOURCE.PASSWORD
+              value: {{ .Values.analytics_db.password | quote }}
+            {{- with .Values.extraEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.app.context_path }}/monitoring/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.app.context_path }}/monitoring/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
