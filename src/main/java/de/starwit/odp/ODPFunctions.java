@@ -1,19 +1,12 @@
 package de.starwit.odp;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -32,7 +24,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.starwit.odp.analytics.AnalyticsRepository;
-import de.starwit.odp.analytics.OccupancyDTO;
 import de.starwit.odp.model.AuthTokenResponse;
 import de.starwit.odp.model.OffStreetParking;
 import de.starwit.odp.model.OffStreetParkingFunctions;
@@ -55,12 +46,13 @@ public class ODPFunctions {
     @Value("${odp.parking.url}")
     private String parkingSpaceUrl;
 
+    @Value("${odp.parkingareaid}")
+    private String parkingSpaceId;
+
     @Value("${config.autostart}")
-    private boolean autostart;
+    private boolean sendUpdates;
 
-    private List<OffStreetParking> parkingSpaces = new ArrayList<>();
-
-    private boolean sendUpdates = false;
+    private OffStreetParking ofs;
 
     private LocalDateTime tokenTimeStamp;
     private String token = null;
@@ -69,30 +61,16 @@ public class ODPFunctions {
     private RestTemplate restTemplate;
     private ObjectMapper mapper;
 
+    @Autowired
+    AnalyticsRepository repository;
+
     @PostConstruct
     public void init() {
         log.info("Starting ODP Adapter, connecting to " + parkingSpaceUrl);
         log.debug("loading mapping data");
-        parseParkingSpaceMapping("ParkingSpaceMapping.json");
-        if(autostart) {
-            importParkingSpaceData();
-            sendUpdates = true;
-        }
+        getAccessToken();
+        ofs = getDataFromODP(parkingSpaceId);
     }
-
-    public void parseParkingSpaceMapping(String mappingFilename) {
-        ClassPathResource odpResultRes = new ClassPathResource(mappingFilename);
-        byte[] binaryData;
-        try {
-            binaryData = FileCopyUtils.copyToByteArray(odpResultRes.getInputStream());
-            String strJson = new String(binaryData, StandardCharsets.UTF_8);
-            ObjectMapper om = new ObjectMapper();
-            OffStreetParking[] parkingSpaceMapping = om.readValue(strJson,OffStreetParking[].class);
-            parkingSpaces = Arrays.asList(parkingSpaceMapping);
-        } catch (IOException e) {
-            log.error("Can't parse initial mapping. Not a lot will work. " + e.getMessage());
-        }     
-    }     
 
     private void getAccessToken() {
         HttpHeaders headers = new HttpHeaders();
@@ -130,39 +108,25 @@ public class ODPFunctions {
             // token is too old, try again to aqcuire one
             if(diff > 2590000) {
                 log.debug("Token too old, get a new one");
-                
+                getAccessToken();
             }
         }
     }
 
     /* ********************** Updating ODP ************************ */
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 6000)
     private void updateParkingState() {
         if(sendUpdates) {
-            log.debug("send updates to ODP");
             checkIfTokenIsStillValid();
             if(token != null) {
-                for (OffStreetParking ofs : parkingSpaces) {
-                    if(ofs.isSynched()) {
-                        updateParkingData(ofs);
-                        sendOffStreetParkingUpdate(ofs);
-                    }
+                if(ofs.isSynched()) {
+                    ofs.setAvailableParkingSpots(repository.getParkedCars());
+                    sendOffStreetParkingUpdate(ofs);
                 }
             } else {
                 log.info("No valid token, can't update ODP");
             }
         }
-    }
-
-    /**
-     * To be replaced by getting actual data.
-     * @param ofs
-     */
-    private void updateParkingData(OffStreetParking ofs) {
-        log.info("yet only fake random data");
-        Random ran = new Random();
-        int newAvailableSpots = ran.nextInt(ofs.getTotalSpotNumber());
-        ofs.setAvailableParkingSpots(newAvailableSpots);
     }
 
     private void sendOffStreetParkingUpdate(OffStreetParking ofs) {
@@ -173,7 +137,10 @@ public class ODPFunctions {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(createAvailableSpotsRequestBody(ofs), headers);
         ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + ofs.getOdpID() + "/attrs", HttpMethod.PATCH, request, String.class);
-        log.debug("Updated parking space " + ofs.getOdpID() + " with response code " + response.getStatusCode());
+        log.debug("Updated parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
+        if(!response.getStatusCode().is2xxSuccessful()) {
+            log.error("Can't update parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
+        } 
     }
 
     private String createAvailableSpotsRequestBody(OffStreetParking ofs) {
@@ -188,15 +155,10 @@ public class ODPFunctions {
 
     /* ********************** Synching with ODP ************************ */
 
-    public void importParkingSpaceData() {
-        checkIfTokenIsStillValid();
-        for (OffStreetParking ofs : parkingSpaces) {
-            OffStreetParking tmp = getDataFromODP(ofs.getOdpID());
-            ofs.copyContent(tmp);
-        }
-    }
-
     private OffStreetParking getDataFromODP(String parkingSpaceId) {
+        OffStreetParking offStreetParking = new OffStreetParking();
+        offStreetParking.setOdpID(parkingSpaceId);
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("fiware-ServicePath", "/ParkingManagement");
         headers.set("fiware-service","Wolfsburg");
@@ -205,32 +167,14 @@ public class ODPFunctions {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + parkingSpaceId, HttpMethod.GET, request, String.class);    
-            OffStreetParking offStreetParking = OffStreetParkingFunctions.extractOffstreetParking(response.getBody());
+            offStreetParking = OffStreetParkingFunctions.extractOffstreetParking(response.getBody());
             offStreetParking.setOdpID(parkingSpaceId);
+            offStreetParking.setSynched(true);
             log.info("Get data from ODP for " + parkingSpaceId + " - " + offStreetParking.toString());
-            return offStreetParking;
         } catch (HttpClientErrorException e) {
             log.info("Can't get parking space data for " + parkingSpaceId + " with response " + e.getStatusCode());
         }
-        return null;
-    }
-
-    /* ********************** Managing Parking Spaces ************************ */
-
-    public void addParkingSpace(OffStreetParking ofs) {
-        parkingSpaces.add(ofs);
-    }
-
-    public void removeParkingSpace(String parkingSpaceId) {
-        for (OffStreetParking ofs : parkingSpaces) {
-            if(ofs.getOdpID().equals(parkingSpaceId)) {
-                parkingSpaces.remove(ofs);
-            }
-        }
-    }    
-
-    public List<OffStreetParking> getParkingSpaces() {
-        return parkingSpaces;
+        return offStreetParking;
     }
 
     public boolean isSendUpdates() {
