@@ -35,8 +35,7 @@ jobs:
 
     - name: get version from pom.xml
       run: |      
-        echo "VERSION_BUILD=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )-${{ github.run_number }}" >> $GITHUB_ENV
-        echo "VERSION_JAR=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+        echo "VERSION_BUILD=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )"  >> "$GITHUB_OUTPUT"
 
     - name: Build with Maven
       run: mvn clean -B package --file pom.xml
@@ -44,7 +43,7 @@ jobs:
          CI: false
          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
          MAVEN_GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
-         
+
   publish_docker:
     name: "Build and publish docker"
     needs: build
