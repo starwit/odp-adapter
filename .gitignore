@@ -1,3 +1,5 @@
 .vscode
 .mvn
 target
+
+sample_values.yaml

@@ -49,11 +49,11 @@ spec:
               value: {{ .Values.odp.parkingareaid | quote }}
             - name: ANALYTICS_OBSERVATION_AREA
               value: {{ .Values.odp.analytics_observation_area | quote }}
-            - name: SPRING.DATASOURCE.URL
+            - name: SPRING_DATASOURCE_URL
               value: {{ .Values.analytics_db.url | quote }}
-            - name: SPRING.DATASOURCE.USERNAME
+            - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.analytics_db.username | quote }}
-            - name: SPRING.DATASOURCE.PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               value: {{ .Values.analytics_db.password | quote }}
             {{- with .Values.extraEnv }}
             {{- tpl . $ | nindent 12 }}
