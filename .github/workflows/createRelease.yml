@@ -116,7 +116,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./dockerfile
+        file: ./Dockerfile
         push: true
         tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
@@ -144,6 +144,10 @@ jobs:
       working-directory: target/helm/odp-adapter
       run: |
         echo "HELM_VERSION=$(grep version: Chart.yaml | head -1 | awk '{print $2}')" >> $GITHUB_ENV
+
+    - name: debug
+      run: |
+        find .
 
     - name: run helm push
       working-directory: target/helm
