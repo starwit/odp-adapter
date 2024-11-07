@@ -11,6 +11,11 @@
   <name>odp-adapter</name>
   <url>http://starwit.de</url>
 
+  <scm>
+    <connection>scm:git:https://github.com/starwit/odp-adapter.git</connection>
+    <tag>0.0.1</tag>
+  </scm>  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
