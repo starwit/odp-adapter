@@ -4,14 +4,14 @@
 
   <groupId>de.starwit</groupId>
   <artifactId>odp-adapter</artifactId>
-  <version>0.0.1-4-SNAPSHOT</version>
+  <version>0.0.1-4</version>
 
   <name>odp-adapter</name>
   <url>http://starwit.de</url>
 
   <scm>
     <connection>scm:git:https://github.com/starwit/odp-adapter.git</connection>
-    <tag>0.0.1</tag>
+    <tag>odp-adapter-0.0.1-4</tag>
   </scm>  
 
   <properties>
