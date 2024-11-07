@@ -38,15 +38,6 @@ jobs:
       with:
          maven-version: 3.9.2      
 
-    - name: setup node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20  
-
-    - run: npm --version
-    - run: node --version
-    - run: mvn --version
-
     - name: checkout
       uses: actions/checkout@v4
       with:
@@ -98,3 +89,66 @@ jobs:
          CI: false
          PRIVATE_REPO_USERNAME: ${{ vars.PRIVATE_REPO_USERNAME }}
          MAVEN_REPO_READ: ${{ secrets.MAVEN_REPO_READ }}
+         MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+         MAVEN_GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+
+
+  publish_docker:
+    name: "Build and publish docker"
+    needs: build
+    runs-on: [self-hosted, linux, X64]
+
+    steps:
+    - name: Get tag name
+      run: |
+        echo "TAG=$( git describe --abbrev=0 )" >> $GITHUB_ENV
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ env.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+
+  publish_helm:
+    name: "Publish helm chart"
+    needs: build
+    runs-on: [self-hosted, linux, X64]
+    
+    steps:
+    - name: get helm
+      uses: azure/setup-helm@v4
+
+    - name: login to Helm registry
+      run: helm registry login registry-1.docker.io -u starwit -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: run helm update
+      working-directory: target/helm/odp-adapter
+      run: helm dep update
+
+    - name: run helm package
+      working-directory: target/helm
+      run: helm package odp-adapter
+
+    - name: get version number
+      working-directory: target/helm/odp-adapter
+      run: |
+        echo "HELM_VERSION=$(grep version: Chart.yaml | head -1 | awk '{print $2}')" >> $GITHUB_ENV
+
+    - name: debug
+      run: |
+        find .
+
+    - name: run helm push
+      working-directory: target/helm
+      run: helm push odp-adapter-chart-${{ env.HELM_VERSION }}.tgz oci://registry-1.docker.io/starwitorg

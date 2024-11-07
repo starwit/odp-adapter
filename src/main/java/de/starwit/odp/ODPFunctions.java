@@ -85,7 +85,14 @@ public class ODPFunctions {
         map.add("password", password);        
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-        HttpEntity<String> response = restTemplate.postForEntity(authUrl, request, String.class);
+        HttpEntity<String> response;
+        try {
+            response = restTemplate.postForEntity(authUrl, request, String.class);
+        } catch (HttpClientErrorException e) {
+            log.error("Can't get access token for user " + username + " with error: " + e.getMessage());
+            token = null;
+            return;
+        }
 
         mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {

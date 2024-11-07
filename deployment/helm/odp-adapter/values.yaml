@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: starwitorg/odp-adapter
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ${project.version}
+
+app:
+  context_path: ""
+
+service:
+  port: 8080
+
+odp:
+  url: https://api.staging.wolfsburg.digital/context/v2/entities/
+  auth_url: https://auth.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
+  username: username
+  password: password
+  parkingareaid: OffStreetParking-Pkpd-787878
+  analytics_observation_area: 12
+
+analytics_db:
+  url: jdbc:postgresql://localhost:5432/analytics
+  username: analytics
+  password: analytics
+
+# extraEnv: |
+#   - name: JAVA_TOOL_OPTIONS
+#     value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5000
+#   - name: LOGGING_LEVEL_ROOT
+#     value: DEBUG
+
+autoscaling:
+  enabled: false

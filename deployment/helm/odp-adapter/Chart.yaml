@@ -1,0 +1,9 @@
+apiVersion: v2
+name: odp-adapter-chart
+description: A Helm chart to deploy odp-adapter to Kubernetes
+
+type: application
+
+version: ${project.version}
+
+appVersion: ${project.version}

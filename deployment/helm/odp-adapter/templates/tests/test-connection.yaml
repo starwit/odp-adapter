@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "odp-adapter.fullname" . }}-test-connection"
+  labels:
+    {{- include "odp-adapter.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "odp-adapter.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
