@@ -27,7 +27,8 @@ odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
 
 # Configure mapping to parking area
 odp.parkingareaid=OffStreetParking-Pkpd-787878
-analytics.observation_area=12
+# prefix for observation areas to sum
+analytics.observation_area_prefix=parking
 ```
 
 ## Build & Run
