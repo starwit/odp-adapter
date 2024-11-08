@@ -69,6 +69,8 @@ jobs:
          CI: false
          PRIVATE_REPO_USERNAME: ${{ vars.PRIVATE_REPO_USERNAME }}
          MAVEN_REPO_READ: ${{ secrets.MAVEN_REPO_READ }}
+         MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+         MAVEN_GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
 
     - name: Get tag name
       run: |
