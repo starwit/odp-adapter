@@ -144,7 +144,7 @@ public class ODPFunctions {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(createAvailableSpotsRequestBody(ofs), headers);
         ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + ofs.getOdpID() + "/attrs", HttpMethod.PATCH, request, String.class);
-        log.debug("Updated parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
+        log.info("Updated parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
         if(!response.getStatusCode().is2xxSuccessful()) {
             log.error("Can't update parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
         } 

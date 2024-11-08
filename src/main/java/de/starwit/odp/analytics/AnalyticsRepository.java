@@ -19,7 +19,7 @@ public class AnalyticsRepository {
 
     private Logger log = LoggerFactory.getLogger(AnalyticsRepository.class);
 
-    @Value("${analytics.observation_area}")
+    @Value("${analytics.observation_area_prefix}")
     private String observationArea;
 
     @PersistenceContext
@@ -30,11 +30,10 @@ public class AnalyticsRepository {
     }
     
     private List<String> getAllObservationConfigs() {
-        String query = "SELECT name FROM public.metadata where classification = 'observe' AND observation_area_id=?1";
+        String query = "SELECT name FROM public.metadata where classification = 'observe' AND name like ?1";
         Query q = entityManager.createNativeQuery(query, String.class);
-        log.info(observationArea);
         
-        q.setParameter(1, BigInteger.valueOf(Long.parseLong(observationArea)));
+        q.setParameter(1, observationArea + "%");
         List<String> result = (List<String>) q.getResultList();
         return result;
     }
@@ -48,13 +47,12 @@ public class AnalyticsRepository {
                         + "	metadata.center_latitude as latitude  "
                         + "FROM areaoccupancy "
                         + "JOIN metadata ON metadata_id = metadata.id "
-                        + "where areaoccupancy.object_class_id = 2 AND metadata.observation_area_id=?1 AND metadata.name=?2 "
+                        + "where areaoccupancy.object_class_id = 2 AND metadata.name=?1 "
                         + "order by areaoccupancy.occupancy_time desc limit 1";
 
         Query q = entityManager.createNativeQuery(query, OccupancyDTO.class);
-        q.setParameter(1, BigInteger.valueOf(Long.parseLong(observationArea)));
         for (String name : parkingAreaNames) {
-            q.setParameter(2, name);
+            q.setParameter(1, name);
             OccupancyDTO areaData = (OccupancyDTO) q.getSingleResult();
             result += areaData.getCount();
         }

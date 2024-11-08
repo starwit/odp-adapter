@@ -18,7 +18,7 @@ odp:
   username: username
   password: password
   parkingareaid: OffStreetParking-Pkpd-787878
-  analytics_observation_area: 12
+  analytics_observation_area: parking
 
 analytics_db:
   url: jdbc:postgresql://localhost:5432/analytics
