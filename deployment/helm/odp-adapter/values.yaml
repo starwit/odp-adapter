@@ -15,6 +15,7 @@ service:
 odp:
   url: https://api.staging.wolfsburg.digital/context/v2/entities/
   auth_url: https://auth.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
+  update_frequency: 30000 # update every n milliseconds
   username: username
   password: password
   parkingareaid: OffStreetParking-Pkpd-787878

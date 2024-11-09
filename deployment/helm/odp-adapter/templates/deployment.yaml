@@ -45,6 +45,8 @@ spec:
               value: {{ .Values.odp.username | quote }}
             - name: ODP_AUTH_PASSWORD
               value: {{ .Values.odp.password | quote }}
+            - name: ODP_UPDATE_FREQUENCY
+              value: {{ .Values.odp.update_frequency | quote }}
             - name: ODP_PARKINGAREAID
               value: {{ .Values.odp.parkingareaid | quote }}
             - name: ANALYTICS_OBSERVATION_AREA

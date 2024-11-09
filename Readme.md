@@ -25,6 +25,9 @@ odp.auth.url=https://auth.staging.wolfsburg.digital/auth/realms/default/protocol
 # URL to read & update parking space data
 odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
 
+# How often updates will be send
+odp.update_frequency=30000
+
 # Configure mapping to parking area
 odp.parkingareaid=OffStreetParking-Pkpd-787878
 # prefix for observation areas to sum
