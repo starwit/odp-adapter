@@ -121,7 +121,7 @@ public class ODPFunctions {
     }
 
     /* ********************** Updating ODP ************************ */
-    @Scheduled(fixedDelay = 6000)
+    @Scheduled(fixedRateString = "${odp.update_frequency}")
     private void updateParkingState() {
         if(sendUpdates) {
             checkIfTokenIsStillValid();
