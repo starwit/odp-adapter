@@ -30,6 +30,8 @@ odp.update_frequency=30000
 
 # Configure mapping to parking area
 odp.parkingareaid=OffStreetParking-Pkpd-787878
+# fallback default, if reading value from ODP fails
+odp.parkingareaid.defaulttotal=70
 # prefix for observation areas to sum
 analytics.observation_area_prefix=parking
 ```

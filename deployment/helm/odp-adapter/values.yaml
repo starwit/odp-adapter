@@ -19,6 +19,7 @@ odp:
   username: username
   password: password
   parkingareaid: OffStreetParking-Pkpd-787878
+  defaulttotal: 70
   analytics_observation_area: parking
 
 analytics_db:
