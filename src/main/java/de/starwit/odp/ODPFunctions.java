@@ -49,6 +49,9 @@ public class ODPFunctions {
     @Value("${odp.parkingareaid}")
     private String parkingSpaceId;
 
+    @Value("${odp.parkingareaid.defaulttotal}")
+    private int parkingSpaceDefaultTotalSpots;
+
     @Value("${config.autostart}")
     private boolean sendUpdates;
 
@@ -127,7 +130,7 @@ public class ODPFunctions {
             checkIfTokenIsStillValid();
             if(token != null) {
                 if(ofs.isSynched()) {
-                    ofs.setAvailableParkingSpots(repository.getParkedCars());
+                    ofs.setAvailableParkingSpots(ofs.getTotalSpotNumber() - repository.getParkedCars());
                     sendOffStreetParkingUpdate(ofs);
                 }
             } else {
@@ -144,7 +147,7 @@ public class ODPFunctions {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(createAvailableSpotsRequestBody(ofs), headers);
         ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + ofs.getOdpID() + "/attrs", HttpMethod.PATCH, request, String.class);
-        log.info("Updated parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
+        log.info("Updated parking space " + ofs.getOdpID() + " with remaining spaces " + ofs.getAvailableParkingSpots() + " out of " + ofs.getTotalSpotNumber() + " with response code " + response.getStatusCode());
         if(!response.getStatusCode().is2xxSuccessful()) {
             log.error("Can't update parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
         } 
@@ -165,6 +168,7 @@ public class ODPFunctions {
     private OffStreetParking getDataFromODP(String parkingSpaceId) {
         OffStreetParking offStreetParking = new OffStreetParking();
         offStreetParking.setOdpID(parkingSpaceId);
+        offStreetParking.setSynched(false);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("fiware-ServicePath", "/ParkingManagement");
@@ -180,6 +184,7 @@ public class ODPFunctions {
             log.info("Get data from ODP for " + parkingSpaceId + " - " + offStreetParking.toString());
         } catch (HttpClientErrorException e) {
             log.info("Can't get parking space data for " + parkingSpaceId + " with response " + e.getStatusCode());
+            offStreetParking.setTotalSpotNumber(parkingSpaceDefaultTotalSpots);
         }
         return offStreetParking;
     }
