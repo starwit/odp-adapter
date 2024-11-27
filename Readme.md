@@ -29,7 +29,7 @@ odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
 odp.update_frequency=30000
 
 # Configure mapping to parking area
-odp.parkingareaid=OffStreetParking-Pkpd-787878
+odp.parkingareaid=OnStreetParking:38444039
 # fallback default, if reading value from ODP fails
 odp.parkingareaid.defaulttotal=70
 # prefix for observation areas to sum
@@ -54,12 +54,12 @@ curl -H application/x-www-form-urlencoded -d "realm=default" -d "client_id=api" 
 
 Get latest OffStreetParking data
 ```bash
-curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities/OffStreetParking-Pkpd-787878/' -H 'fiware-ServicePath: /ParkingManagement' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
+curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/' -H 'fiware-ServicePath: /ParkingManagement' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
 ```
 
 Update OffStreetParking data
 ```bash
-curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v2/entities/OffStreetParking-Pkpd-787878/attrs/' \
+curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/attrs/' \
 --header 'fiware-ServicePath: /ParkingManagement' \
 --header 'fiware-service: Wolfsburg' \
 --header 'content-type: application/json' \
@@ -74,7 +74,7 @@ curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v
 
 Query ParkingSpots
 ```bash
-curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities?type=ParkingSpot' -H 'fiware-ServicePath: /ParkingManagement/Meckauer' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer '
+curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities?type=ParkingSpot' -H 'fiware-ServicePath: /ParkingManagement/Meckauer' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
 ```
 
 ## License & Contribution

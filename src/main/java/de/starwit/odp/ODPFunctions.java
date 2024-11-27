@@ -25,8 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.starwit.odp.analytics.AnalyticsRepository;
 import de.starwit.odp.model.AuthTokenResponse;
-import de.starwit.odp.model.OffStreetParking;
-import de.starwit.odp.model.OffStreetParkingFunctions;
+import de.starwit.odp.model.OnStreetParking;
+import de.starwit.odp.model.OnStreetParkingFunctions;
 import jakarta.annotation.PostConstruct;
 
 @Service
@@ -55,7 +55,7 @@ public class ODPFunctions {
     @Value("${config.autostart}")
     private boolean sendUpdates;
 
-    private OffStreetParking ofs;
+    private OnStreetParking ofs;
 
     private LocalDateTime tokenTimeStamp;
     private String token = null;
@@ -131,7 +131,7 @@ public class ODPFunctions {
             if(token != null) {
                 if(ofs.isSynched()) {
                     ofs.setAvailableParkingSpots(ofs.getTotalSpotNumber() - repository.getParkedCars());
-                    sendOffStreetParkingUpdate(ofs);
+                    sendOnStreetParkingUpdate(ofs);
                 }
             } else {
                 log.info("No valid token, can't update ODP");
@@ -139,7 +139,7 @@ public class ODPFunctions {
         }
     }
 
-    private void sendOffStreetParkingUpdate(OffStreetParking ofs) {
+    private void sendOnStreetParkingUpdate(OnStreetParking ofs) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("fiware-ServicePath", "/ParkingManagement");
         headers.set("fiware-service","Wolfsburg");
@@ -153,7 +153,7 @@ public class ODPFunctions {
         } 
     }
 
-    private String createAvailableSpotsRequestBody(OffStreetParking ofs) {
+    private String createAvailableSpotsRequestBody(OnStreetParking ofs) {
         return """
             {
                 "availableSpotNumber": {
@@ -165,10 +165,10 @@ public class ODPFunctions {
 
     /* ********************** Synching with ODP ************************ */
 
-    private OffStreetParking getDataFromODP(String parkingSpaceId) {
-        OffStreetParking offStreetParking = new OffStreetParking();
-        offStreetParking.setOdpID(parkingSpaceId);
-        offStreetParking.setSynched(false);
+    private OnStreetParking getDataFromODP(String parkingSpaceId) {
+        OnStreetParking onStreetParking = new OnStreetParking();
+        onStreetParking.setOdpID(parkingSpaceId);
+        onStreetParking.setSynched(false);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("fiware-ServicePath", "/ParkingManagement");
@@ -178,15 +178,15 @@ public class ODPFunctions {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + parkingSpaceId, HttpMethod.GET, request, String.class);    
-            offStreetParking = OffStreetParkingFunctions.extractOffstreetParking(response.getBody());
-            offStreetParking.setOdpID(parkingSpaceId);
-            offStreetParking.setSynched(true);
-            log.info("Get data from ODP for " + parkingSpaceId + " - " + offStreetParking.toString());
+            onStreetParking = OnStreetParkingFunctions.extractOnstreetParking(response.getBody());
+            onStreetParking.setOdpID(parkingSpaceId);
+            onStreetParking.setSynched(true);
+            log.info("Get data from ODP for " + parkingSpaceId + " - " + onStreetParking.toString());
         } catch (HttpClientErrorException e) {
             log.info("Can't get parking space data for " + parkingSpaceId + " with response " + e.getStatusCode());
-            offStreetParking.setTotalSpotNumber(parkingSpaceDefaultTotalSpots);
+            onStreetParking.setTotalSpotNumber(parkingSpaceDefaultTotalSpots);
         }
-        return offStreetParking;
+        return onStreetParking;
     }
 
     public boolean isSendUpdates() {

@@ -1,0 +1,169 @@
+{
+  "id": "OnStreetParking:38444039",
+  "type": "OnStreetParking",
+  "alternateName": {
+    "type": "Text",
+    "value": "Meckauerweg",
+    "metadata": {}
+  },
+  "availableEvSpotNumber": {
+    "type": "Integer",
+    "value": 0,
+    "metadata": {}
+  },
+  "availableSpotNumber": {
+    "type": "Integer",
+    "value": 39,
+    "metadata": {}
+  },
+  "charge": {
+    "type": "StructuredValue",
+    "value": {
+      "intervalPrice": {
+        "price": 1.3,
+        "valueAddedTax": 0,
+        "priceCurrency": "EUR",
+        "referenceQuantity": {
+          "value": 30,
+          "unitCode": "MIN"
+        }
+      }
+    },
+    "metadata": {}
+  },
+  "chargeType": {
+    "type": "StructuredValue",
+    "value": [
+      "intervalPrice"
+    ],
+    "metadata": {}
+  },
+  "evSpotNumber": {
+    "type": "Integer",
+    "value": 0,
+    "metadata": {}
+  },
+  "location": {
+    "type": "geo:json",
+    "value": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            10.786745821,
+            52.42397175
+          ],
+          [
+            10.786990288,
+            52.423968988
+          ],
+          [
+            10.786994241,
+            52.423974366
+          ],
+          [
+            10.787006339,
+            52.423994996
+          ],
+          [
+            10.787253938,
+            52.424355513
+          ],
+          [
+            10.787150343,
+            52.424365383
+          ],
+          [
+            10.787208151,
+            52.424566903
+          ],
+          [
+            10.786804801,
+            52.424594769
+          ],
+          [
+            10.786682621,
+            52.423980446
+          ],
+          [
+            10.786675599,
+            52.423977535
+          ],
+          [
+            10.786745821,
+            52.42397175
+          ]
+        ]
+      ]
+    },
+    "metadata": {}
+  },
+  "name": {
+    "type": "Text",
+    "value": "38444039",
+    "metadata": {}
+  },
+  "operator": {
+    "type": "Text",
+    "value": "Stadt Wolfsburg",
+    "metadata": {}
+  },
+  "parkingZone": {
+    "type": "Text",
+    "value": "1",
+    "metadata": {}
+  },
+  "permitActiveHours": {
+    "type": "StructuredValue",
+    "value": {
+      "parkingTicket": [
+        {
+          "opens": "07:00:00",
+          "dayOfWeek": "https://schema.org/Monday",
+          "closes": "18:00:00"
+        },
+        {
+          "opens": "07:00:00",
+          "dayOfWeek": "https://schema.org/Tuesday",
+          "closes": "18:00:00"
+        },
+        {
+          "opens": "07:00:00",
+          "dayOfWeek": "https://schema.org/Wednesday",
+          "closes": "18:00:00"
+        },
+        {
+          "opens": "07:00:00",
+          "dayOfWeek": "https://schema.org/Thursday",
+          "closes": "18:00:00"
+        },
+        {
+          "opens": "07:00:00",
+          "dayOfWeek": "https://schema.org/Friday",
+          "closes": "18:00:00"
+        },
+        {
+          "opens": "07:00:00",
+          "dayOfWeek": "https://schema.org/Saturday",
+          "closes": "14:00:00"
+        },
+        {
+          "dayOfWeek": "https://schema.org/PublicHolidays"
+        }
+      ]
+    },
+    "metadata": {}
+  },
+  "requiredPermit": {
+    "type": "StructuredValue",
+    "value": [
+      "parkingTicket"
+    ],
+    "metadata": {}
+  },
+  "totalSpotNumber": {
+    "type": "Integer",
+    "value": 70,
+    "metadata": {}
+  }
+}
