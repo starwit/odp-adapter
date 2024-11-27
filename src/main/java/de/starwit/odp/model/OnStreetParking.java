@@ -2,7 +2,7 @@ package de.starwit.odp.model;
 
 import java.time.LocalDateTime;
 
-public class OffStreetParking {
+public class OnStreetParking {
 	/**
 	 * ID in analytics DB.
 	 */
@@ -19,7 +19,6 @@ public class OffStreetParking {
 	private String odpID;
 	private int availableParkingSpots;
 	private int totalSpotNumber;
-	private LocalDateTime lastUpdate;
 	private boolean synched = false;
 
 	public int getAnalyticsId() {
@@ -62,14 +61,6 @@ public class OffStreetParking {
 		this.totalSpotNumber = totalSpotNumber;
 	}
 
-	public LocalDateTime getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public void setLastUpdate(LocalDateTime lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
-
 	public boolean isSynched() {
 		return synched;
 	}
@@ -80,18 +71,17 @@ public class OffStreetParking {
 
 	@Override
 	public String toString() {
-		return "OffStreetParking [name=" + odpName + ", availableParkingSpots=" + availableParkingSpots
-				+ ", totalSpotNumber=" + totalSpotNumber + ", lastUpdate=" + lastUpdate + "]";
+		return "OnStreetParking [name=" + odpName + ", availableParkingSpots=" + availableParkingSpots
+				+ ", totalSpotNumber=" + totalSpotNumber + "]";
 	}
 
-	public void copyContent(OffStreetParking tmp) {
+	public void copyContent(OnStreetParking tmp) {
 		if(tmp != null && tmp.synched) {
 			analyticsId = tmp.analyticsId;
 			odpName = tmp.odpName;
 			odpID = tmp.odpID;
 			availableParkingSpots = tmp.availableParkingSpots;
 			totalSpotNumber = tmp.totalSpotNumber;
-			lastUpdate = tmp.lastUpdate;
 			synched = tmp.synched;
 		}
 	}	

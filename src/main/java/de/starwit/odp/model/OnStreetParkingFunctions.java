@@ -1,8 +1,5 @@
 package de.starwit.odp.model;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,12 +7,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class OffStreetParkingFunctions {
+public class OnStreetParkingFunctions {
 
-    private static Logger log = LoggerFactory.getLogger(OffStreetParkingFunctions.class);
+    private static Logger log = LoggerFactory.getLogger(OnStreetParkingFunctions.class);
     
-    public static OffStreetParking extractOffstreetParking(String jsonString) {
-        OffStreetParking result = new OffStreetParking();
+    public static OnStreetParking extractOnstreetParking(String jsonString) {
+        OnStreetParking result = new OnStreetParking();
         ObjectMapper om = new ObjectMapper();
         JsonNode rootNode;
         try {
@@ -34,12 +31,6 @@ public class OffStreetParkingFunctions {
             if(totalSpots != null) {
                 JsonNode valueNode = nameNode.get("value");
                 result.setOdpName(valueNode.asText());
-            }
-            JsonNode timestampNode = rootNode.get("dateObserved");
-            if(totalSpots != null) {
-                JsonNode valueNode = timestampNode.get("value");
-                LocalDateTime lastUpdate = LocalDateTime.parse(valueNode.asText(), DateTimeFormatter.ofPattern ("yyyy-MM-dd'T'HH:mm:ss'Z'"));
-                result.setLastUpdate(lastUpdate);
             }
             result.setSynched(true);
         } catch (JsonProcessingException e) {
