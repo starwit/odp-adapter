@@ -130,7 +130,12 @@ public class ODPFunctions {
             checkIfTokenIsStillValid();
             if(token != null) {
                 if(ofs.isSynched()) {
-                    ofs.setAvailableParkingSpots(ofs.getTotalSpotNumber() - repository.getParkedCars());
+                    if(ofs.getTotalSpotNumber() - repository.getParkedCars() < 0) {
+                        ofs.setAvailableParkingSpots(ofs.getTotalSpotNumber() - repository.getParkedCars());
+                    } else {
+                        ofs.setAvailableParkingSpots(0);
+                    }
+                    
                     sendOnStreetParkingUpdate(ofs);
                 }
             } else {
