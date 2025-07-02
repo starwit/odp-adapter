@@ -182,6 +182,7 @@ public class ODPFunctions {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
+            log.debug("Get update from " + parkingSpaceUrl + "/" + parkingSpaceId);
             ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + parkingSpaceId, HttpMethod.GET, request, String.class);    
             onStreetParking = OnStreetParkingFunctions.extractOnstreetParking(response.getBody());
             onStreetParking.setOdpID(parkingSpaceId);

@@ -23,7 +23,7 @@ odp.auth.password=secret
 odp.auth.url=https://auth.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
 
 # URL to read & update parking space data
-odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
+odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/ 
 
 # How often updates will be send
 odp.update_frequency=30000
@@ -54,7 +54,7 @@ curl -H application/x-www-form-urlencoded -d "realm=default" -d "client_id=api" 
 
 Get latest OffStreetParking data
 ```bash
-curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/' -H 'fiware-ServicePath: /ParkingManagement' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
+curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/' -H 'fiware-ServicePath: /ParkingManagement' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
 ```
 
 Update OffStreetParking data
