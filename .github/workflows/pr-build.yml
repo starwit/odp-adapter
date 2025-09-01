@@ -32,11 +32,11 @@ jobs:
         fetch-depth: '0'
 
     - name: Build with Maven
-      run: mvn clean -B package --file pom.xml
+      run: mvn clean -B package -Dgpg.skip --file pom.xml
       env:
          CI: false
          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
-         MAVEN_GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}         
+         MAVEN_GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}   
 
 
 
