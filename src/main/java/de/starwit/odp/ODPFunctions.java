@@ -135,7 +135,7 @@ public class ODPFunctions {
         if(sendUpdates) {
             checkIfTokenIsStillValid();
             if(token != null) {
-                if(onStreetParkingDto.isSynched()) {
+                if(onStreetParkingDto != null && onStreetParkingDto.isSynched()) {
                     updateAvailableParkingSpots();
                     updateDisabledParkingSpots();
                 }
