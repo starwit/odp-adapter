@@ -4,8 +4,10 @@ This software implements an adapter to Wolfsburg's open data platform. It will u
 
 ## Functions
 Adapter implements the following functions:
-* Get OffStreetParking status
-* Set OffStreetParking status
+* startDataTransfer
+* stopDataTransfer
+* getDataFromOdp - gets all properties of parking spots
+* updateParkingState - sends avaiable parking spots and occupied disabled parking spots
 
 ## Configuration
 App can be configured via application.properties file. Just on parking area is supported and it's configuration is also done via application properties. Next to all Spring Boot config the following keys can be used:
@@ -20,10 +22,10 @@ odp.auth.username=meckauer
 # password for ODP login
 odp.auth.password=secret 
 # URL to get auth token
-odp.auth.url=https://auth.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
+odp.auth.url=https://auth.odp.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
 
 # URL to read & update parking space data
-odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/ 
+odp.parking.url=https://api.odp.staging.wolfsburg.digital/context/v2/entities/ 
 
 # How often updates will be send
 odp.update_frequency=30000
