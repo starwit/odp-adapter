@@ -38,7 +38,7 @@ public class AnalyticsRepository {
         for (String name : parkingAreaNames) {
             q.setParameter("areaName", name);
             Integer occupancy = (Integer) q.getSingleResult();
-            result += occupancy;
+            result += (occupancy != null ? occupancy : 0);
         }
         return result;
     }
