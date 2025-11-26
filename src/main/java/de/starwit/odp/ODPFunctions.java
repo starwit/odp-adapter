@@ -166,14 +166,19 @@ public class ODPFunctions {
     }
 
     private void sendNumber(String fieldname, int availableSpots) {
+        String odpID = onStreetParkingDto.getOdpID();
+        if (odpID == null) {
+            log.error("ODP ID is null, cannot update parking space for field " + fieldname + " with value " + availableSpots);
+            return;
+        }
         HttpHeaders headers = getHeaders();
         String body = createAvailableSpotsRequestBody(fieldname, availableSpots);
         log.debug("Request body: " + body);
         HttpEntity<String> request = new HttpEntity<String>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + onStreetParkingDto.getOdpID() + "/attrs", HttpMethod.PATCH, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + odpID + "/attrs", HttpMethod.PATCH, request, String.class);
         log.info("Updated parking space with response code " + response.getStatusCode());
         if(!response.getStatusCode().is2xxSuccessful()) {
-            log.error("Can't update parking space " + onStreetParkingDto.getOdpID() + " with value " + availableSpots + " with response code " + response.getStatusCode());
+            log.error("Can't update parking space " + odpID + " with value " + availableSpots + " with response code " + response.getStatusCode());
         } 
     }
 
