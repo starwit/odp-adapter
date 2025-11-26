@@ -7,7 +7,7 @@ Adapter implements the following functions:
 * startDataTransfer
 * stopDataTransfer
 * getDataFromOdp - gets all properties of parking spots
-* updateParkingState - sends avaiable parking spots and occupied disabled parking spots
+* updateParkingState - sends available parking spots and occupied disabled parking spots
 
 ## Configuration
 App can be configured via application.properties file. Just on parking area is supported and it's configuration is also done via application properties. Next to all Spring Boot config the following keys can be used:
