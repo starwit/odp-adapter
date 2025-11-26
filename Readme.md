@@ -54,16 +54,16 @@ curl -H application/x-www-form-urlencoded -d "realm=default" -d "client_id=api" 
 
 Get latest OffStreetParking data
 ```bash
-curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/' -H 'fiware-ServicePath: /ParkingManagement' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
+curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:MeckauerWeg/' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
 ```
 
 Update OffStreetParking data
 ```bash
-curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/attrs/' \
---header 'fiware-ServicePath: /ParkingManagement' \
+curl --location --request PATCH 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:MeckauerWeg/attrs/' \
+--header 'fiware-ServicePath: /ParkingManagement/Meckauerweg' \
 --header 'fiware-service: Wolfsburg' \
 --header 'content-type: application/json' \
- -H 'Authorization: Bearer Token ' \
+ -H 'Authorization: $KEYCLOAK_TOKEN ' \
 --data '{
     "availableSpotNumber": {
         "type": "Integer",
@@ -74,7 +74,7 @@ curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v
 
 Query ParkingSpots
 ```bash
-curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities?type=ParkingSpot' -H 'fiware-ServicePath: /ParkingManagement/Meckauer' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
+curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
 ```
 
 ## License & Contribution

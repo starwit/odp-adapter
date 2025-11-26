@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
 
-import de.starwit.odp.model.OnStreetParking;
-import de.starwit.odp.model.OnStreetParkingFunctions;
+import de.starwit.odp.model.OnStreetParkingDto;
+import de.starwit.odp.model.OnStreetParkingParser;
 
 public class AppTest {
 
@@ -19,7 +19,7 @@ public class AppTest {
         ClassPathResource odpResultRes = new ClassPathResource("SampleOnStreetParking.json");
         byte[] binaryData = FileCopyUtils.copyToByteArray(odpResultRes.getInputStream());
         String strJson = new String(binaryData, StandardCharsets.UTF_8);
-        OnStreetParking osp = OnStreetParkingFunctions.extractOnstreetParking(strJson);
+        OnStreetParkingDto osp = OnStreetParkingParser.extractOnstreetParking(strJson);
 
         assertTrue(osp.getAvailableParkingSpots() == 39);
         assertEquals("38444039", osp.getOdpName());

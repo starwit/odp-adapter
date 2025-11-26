@@ -1,8 +1,6 @@
 package de.starwit.odp.model;
 
-import java.time.LocalDateTime;
-
-public class OnStreetParking {
+public class OnStreetParkingDto {
 	/**
 	 * ID in analytics DB.
 	 */
@@ -19,6 +17,8 @@ public class OnStreetParking {
 	private String odpID;
 	private int availableParkingSpots;
 	private int totalSpotNumber;
+	private int disabledSpotNumber;
+	private int occupiedDisabledSpotNumber;
 	private boolean synched = false;
 
 	public int getAnalyticsId() {
@@ -61,6 +61,22 @@ public class OnStreetParking {
 		this.totalSpotNumber = totalSpotNumber;
 	}
 
+	public int getDisabledSpotNumber() {
+		return disabledSpotNumber;
+	}
+
+	public void setDisabledSpotNumber(int disabledSpotNumber) {
+		this.disabledSpotNumber = disabledSpotNumber;
+	}
+
+	public int getOccupiedDisabledSpotNumber() {
+		return occupiedDisabledSpotNumber;
+	}
+
+	public void setOccupiedDisabledSpotNumber(int occupiedDisabledSpotNumber) {
+		this.occupiedDisabledSpotNumber = occupiedDisabledSpotNumber;
+	}
+
 	public boolean isSynched() {
 		return synched;
 	}
@@ -75,7 +91,7 @@ public class OnStreetParking {
 				+ ", totalSpotNumber=" + totalSpotNumber + "]";
 	}
 
-	public void copyContent(OnStreetParking tmp) {
+	public void copyContent(OnStreetParkingDto tmp) {
 		if(tmp != null && tmp.synched) {
 			analyticsId = tmp.analyticsId;
 			odpName = tmp.odpName;
