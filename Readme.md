@@ -29,11 +29,12 @@ odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/
 odp.update_frequency=30000
 
 # Configure mapping to parking area
-odp.parkingareaid=OnStreetParking:38444039
+odp.servicepath=/ParkingManagement/Meckauerweg
 # fallback default, if reading value from ODP fails
-odp.parkingareaid.defaulttotal=70
+odp.parkingarea.defaulttotal=70
 # prefix for observation areas to sum
 analytics.observation_area_prefix=parking
+analytics.disabled_area_prefix=disable
 ```
 
 ## Build & Run

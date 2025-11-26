@@ -197,6 +197,15 @@ public class ODPFunctions {
     }
 
     /* ********************** Synching with ODP ************************ */
+    @Scheduled(fixedRateString = "${odp.data_sync_frequency}")
+    private void syncWithODP() {
+        checkIfTokenIsStillValid();
+        if(token != null) {
+            onStreetParkingDto = getDataFromODP();
+        } else {
+            log.info("No valid token, can't update ODP");
+        }
+    }
 
     private OnStreetParkingDto getDataFromODP() {
         OnStreetParkingDto onStreetParking = new OnStreetParkingDto();

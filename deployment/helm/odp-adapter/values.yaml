@@ -16,6 +16,7 @@ odp:
   url: https://api.odp.staging.wolfsburg.digital/context/v2/entities/
   auth_url: https://auth.odp.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
   update_frequency: 30000 # update every n milliseconds
+  data_sync_frequency: 86400000 # sync data every 24 hours
   username: username
   password: password
   defaulttotal: 70
