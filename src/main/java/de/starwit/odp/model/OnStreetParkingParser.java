@@ -3,6 +3,7 @@ package de.starwit.odp.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,8 +33,7 @@ public class OnStreetParkingParser {
                 result.setOdpID(spotNode.asText());
             } else {
                 log.info("No ID found for onstreet parking in ODP response");
-                throw new JsonProcessingException("No ID found for onstreet parking in ODP response") {
-                };
+                throw new JsonParseException("No ID found for onstreet parking in ODP response");
             }
 
             spotNode = rootNode.get("availableSpotNumber");
