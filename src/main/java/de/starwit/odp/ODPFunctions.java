@@ -25,8 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.starwit.odp.analytics.AnalyticsRepository;
 import de.starwit.odp.model.AuthTokenResponse;
-import de.starwit.odp.model.OnStreetParking;
-import de.starwit.odp.model.OnStreetParkingFunctions;
+import de.starwit.odp.model.OnStreetParkingDto;
+import de.starwit.odp.model.OnStreetParkingParser;
 import jakarta.annotation.PostConstruct;
 
 @Service
@@ -46,16 +46,22 @@ public class ODPFunctions {
     @Value("${odp.parking.url}")
     private String parkingSpaceUrl;
 
-    @Value("${odp.parkingareaid}")
-    private String parkingSpaceId;
+    @Value("${odp.servicepath}")
+    private String servicePath;
 
-    @Value("${odp.parkingareaid.defaulttotal}")
+    @Value("${odp.parkingarea.defaulttotal}")
     private int parkingSpaceDefaultTotalSpots;
 
     @Value("${config.autostart}")
     private boolean sendUpdates;
 
-    private OnStreetParking ofs;
+    @Value("${analytics.observation_area_prefix}")
+    private String observationAreaPrefix;
+
+    @Value("${analytics.disabled_area_prefix}")
+    private String disabledAreaPrefix;
+
+    private OnStreetParkingDto onStreetParkingDto;
 
     private LocalDateTime tokenTimeStamp;
     private String token = null;
@@ -72,7 +78,7 @@ public class ODPFunctions {
         log.info("Starting ODP Adapter, connecting to " + parkingSpaceUrl);
         log.debug("loading mapping data");
         getAccessToken();
-        ofs = getDataFromODP(parkingSpaceId);
+        onStreetParkingDto = getDataFromODP();
     }
 
     private void getAccessToken() {
@@ -84,8 +90,8 @@ public class ODPFunctions {
         map.add("client_id", "api");
         map.add("scope", "entity:read entity:write"); 
         map.add("grant_type", "password"); 
-        map.add("username", username);
-        map.add("password", password);        
+        map.add("username", username.trim());
+        map.add("password", password.trim());        
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
         HttpEntity<String> response;
@@ -129,14 +135,9 @@ public class ODPFunctions {
         if(sendUpdates) {
             checkIfTokenIsStillValid();
             if(token != null) {
-                if(ofs.isSynched()) {
-                    if(ofs.getTotalSpotNumber() - repository.getParkedCars() >= 0) {
-                        ofs.setAvailableParkingSpots(ofs.getTotalSpotNumber() - repository.getParkedCars());
-                    } else {
-                        ofs.setAvailableParkingSpots(0);
-                    }
-                    
-                    sendOnStreetParkingUpdate(ofs);
+                if(onStreetParkingDto != null && onStreetParkingDto.isSynched()) {
+                    updateAvailableParkingSpots();
+                    updateDisabledParkingSpots();
                 }
             } else {
                 log.info("No valid token, can't update ODP");
@@ -144,52 +145,91 @@ public class ODPFunctions {
         }
     }
 
-    private void sendOnStreetParkingUpdate(OnStreetParking ofs) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("fiware-ServicePath", "/ParkingManagement");
-        headers.set("fiware-service","Wolfsburg");
-        headers.set("Authorization","Bearer " + token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>(createAvailableSpotsRequestBody(ofs), headers);
-        ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + ofs.getOdpID() + "/attrs", HttpMethod.PATCH, request, String.class);
-        log.info("Updated parking space " + ofs.getOdpID() + " with remaining spaces " + ofs.getAvailableParkingSpots() + " out of " + ofs.getTotalSpotNumber() + " with response code " + response.getStatusCode());
+    private void updateAvailableParkingSpots() {
+        int parkedCars = repository.getParkedCars(observationAreaPrefix);
+        if(onStreetParkingDto.getTotalSpotNumber() - parkedCars >= 0) {
+            onStreetParkingDto.setAvailableParkingSpots(onStreetParkingDto.getTotalSpotNumber() - parkedCars);
+        } else {
+            onStreetParkingDto.setAvailableParkingSpots(0);
+        }
+        sendNumber("availableSpotNumber", onStreetParkingDto.getAvailableParkingSpots());
+    }
+
+    private void updateDisabledParkingSpots() {
+        int parkedCars = repository.getParkedCars(disabledAreaPrefix);
+        if(onStreetParkingDto.getDisabledSpotNumber() - parkedCars >= 0) {
+            onStreetParkingDto.setOccupiedDisabledSpotNumber(parkedCars);
+        } else {
+            onStreetParkingDto.setOccupiedDisabledSpotNumber(0);
+        }
+        sendNumber("occupiedDisabledSpotNumber", onStreetParkingDto.getOccupiedDisabledSpotNumber());
+    }
+
+    private void sendNumber(String fieldname, int availableSpots) {
+        String odpID = onStreetParkingDto.getOdpID();
+        if (odpID == null) {
+            log.error("ODP ID is null, cannot update parking space for field " + fieldname + " with value " + availableSpots);
+            return;
+        }
+        HttpHeaders headers = getHeaders();
+        String body = createSpotsRequestBody(fieldname, availableSpots);
+        log.debug("Request body: " + body);
+        HttpEntity<String> request = new HttpEntity<String>(body, headers);
+        ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + odpID + "/attrs", HttpMethod.PATCH, request, String.class);
+        log.info("Updated " + servicePath + ":" + fieldname + " with " + availableSpots + " spots resulted with " + response.getStatusCode());
         if(!response.getStatusCode().is2xxSuccessful()) {
-            log.error("Can't update parking space " + ofs.getOdpID() + " with value " + ofs.getAvailableParkingSpots() + " with response code " + response.getStatusCode());
+            log.error("Can't update parking space " + odpID + " with value " + availableSpots + " with response code " + response.getStatusCode());
         } 
     }
 
-    private String createAvailableSpotsRequestBody(OnStreetParking ofs) {
+    private HttpHeaders getHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("fiware-ServicePath", servicePath);
+        headers.set("fiware-service","Wolfsburg");
+        headers.set("Authorization","Bearer " + token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
+    }
+
+    private String createSpotsRequestBody(String fieldname, int availableSpots) {
         return """
             {
-                "availableSpotNumber": {
+                "##FIELDNAME##": {
                     "type": "Integer",
-                    "value": ##
+                    "value": ##VALUE##
                 }
-            }""".replace("##", "" + ofs.getAvailableParkingSpots());
+            }""".replace("##FIELDNAME##", fieldname).replace("##VALUE##", "" + availableSpots);
     }
 
     /* ********************** Synching with ODP ************************ */
+    @Scheduled(fixedRateString = "${odp.data_sync_frequency}")
+    private void syncWithODP() {
+        checkIfTokenIsStillValid();
+        if(token != null) {
+            onStreetParkingDto = getDataFromODP();
+        } else {
+            log.info("No valid token, can't update ODP");
+        }
+    }
 
-    private OnStreetParking getDataFromODP(String parkingSpaceId) {
-        OnStreetParking onStreetParking = new OnStreetParking();
-        onStreetParking.setOdpID(parkingSpaceId);
+    private OnStreetParkingDto getDataFromODP() {
+        OnStreetParkingDto onStreetParking = new OnStreetParkingDto();
         onStreetParking.setSynched(false);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("fiware-ServicePath", "/ParkingManagement");
+        headers.set("fiware-ServicePath", servicePath);
         headers.set("fiware-service","Wolfsburg");
         headers.set("Authorization","Bearer " + token);
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
-            log.debug("Get update from " + parkingSpaceUrl + "/" + parkingSpaceId);
-            ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + parkingSpaceId, HttpMethod.GET, request, String.class);    
-            onStreetParking = OnStreetParkingFunctions.extractOnstreetParking(response.getBody());
-            onStreetParking.setOdpID(parkingSpaceId);
+            log.debug("Get update from " + parkingSpaceUrl);
+            ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl, HttpMethod.GET, request, String.class);    
+            onStreetParking = OnStreetParkingParser.extractOnstreetParking(response.getBody());
             onStreetParking.setSynched(true);
-            log.info("Get data from ODP for " + parkingSpaceId + " - " + onStreetParking.toString());
+            log.info("Get data from ODP for service path " + servicePath + " - " + onStreetParking.toString());
         } catch (HttpClientErrorException e) {
-            log.info("Can't get parking space data for " + parkingSpaceId + " with response " + e.getStatusCode());
+            log.info("Can't get parking space data for service path " + servicePath + " with response " + e.getStatusCode());
             onStreetParking.setTotalSpotNumber(parkingSpaceDefaultTotalSpots);
         }
         return onStreetParking;

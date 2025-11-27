@@ -3,5 +3,6 @@
 target
 
 sample_values.yaml
+application.properties
 
 env.sh

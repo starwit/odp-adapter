@@ -4,8 +4,10 @@ This software implements an adapter to Wolfsburg's open data platform. It will u
 
 ## Functions
 Adapter implements the following functions:
-* Get OffStreetParking status
-* Set OffStreetParking status
+* startDataTransfer
+* stopDataTransfer
+* getDataFromOdp - gets all properties of parking spots
+* updateParkingState - sends available parking spots and occupied disabled parking spots
 
 ## Configuration
 App can be configured via application.properties file. Just on parking area is supported and it's configuration is also done via application properties. Next to all Spring Boot config the following keys can be used:
@@ -20,20 +22,21 @@ odp.auth.username=meckauer
 # password for ODP login
 odp.auth.password=secret 
 # URL to get auth token
-odp.auth.url=https://auth.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
+odp.auth.url=https://auth.odp.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token
 
 # URL to read & update parking space data
-odp.parking.url=https://api.staging.wolfsburg.digital/context/v2/entities/ 
+odp.parking.url=https://api.odp.staging.wolfsburg.digital/context/v2/entities/ 
 
 # How often updates will be send
 odp.update_frequency=30000
 
 # Configure mapping to parking area
-odp.parkingareaid=OnStreetParking:38444039
+odp.servicepath=/ParkingManagement/Meckauerweg
 # fallback default, if reading value from ODP fails
-odp.parkingareaid.defaulttotal=70
+odp.parkingarea.defaulttotal=70
 # prefix for observation areas to sum
 analytics.observation_area_prefix=parking
+analytics.disabled_area_prefix=disable
 ```
 
 ## Build & Run
@@ -54,16 +57,16 @@ curl -H application/x-www-form-urlencoded -d "realm=default" -d "client_id=api" 
 
 Get latest OffStreetParking data
 ```bash
-curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/' -H 'fiware-ServicePath: /ParkingManagement' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
+curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:MeckauerWeg/' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
 ```
 
 Update OffStreetParking data
 ```bash
-curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:38444039/attrs/' \
---header 'fiware-ServicePath: /ParkingManagement' \
+curl --location --request PATCH 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:MeckauerWeg/attrs/' \
+--header 'fiware-ServicePath: /ParkingManagement/Meckauerweg' \
 --header 'fiware-service: Wolfsburg' \
 --header 'content-type: application/json' \
- -H 'Authorization: Bearer Token ' \
+ -H 'Authorization: $KEYCLOAK_TOKEN ' \
 --data '{
     "availableSpotNumber": {
         "type": "Integer",
@@ -74,7 +77,7 @@ curl --location --request PATCH 'https://api.staging.wolfsburg.digital/context/v
 
 Query ParkingSpots
 ```bash
-curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities?type=ParkingSpot' -H 'fiware-ServicePath: /ParkingManagement/Meckauer' -H 'fiware-service: Wolfsburg' -H 'Authorization: Bearer TOKEN'
+curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
 ```
 
 ## License & Contribution
