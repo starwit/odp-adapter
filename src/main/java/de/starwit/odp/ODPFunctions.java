@@ -172,11 +172,11 @@ public class ODPFunctions {
             return;
         }
         HttpHeaders headers = getHeaders();
-        String body = createAvailableSpotsRequestBody(fieldname, availableSpots);
+        String body = createSpotsRequestBody(fieldname, availableSpots);
         log.debug("Request body: " + body);
         HttpEntity<String> request = new HttpEntity<String>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(parkingSpaceUrl + "/" + odpID + "/attrs", HttpMethod.PATCH, request, String.class);
-        log.info("Updated parking space with response code " + response.getStatusCode());
+        log.info("Updated " + servicePath + ":" + fieldname + " with " + availableSpots + " spots resulted with " + response.getStatusCode());
         if(!response.getStatusCode().is2xxSuccessful()) {
             log.error("Can't update parking space " + odpID + " with value " + availableSpots + " with response code " + response.getStatusCode());
         } 
@@ -191,7 +191,7 @@ public class ODPFunctions {
         return headers;
     }
 
-    private String createAvailableSpotsRequestBody(String fieldname, int availableSpots) {
+    private String createSpotsRequestBody(String fieldname, int availableSpots) {
         return """
             {
                 "##FIELDNAME##": {
