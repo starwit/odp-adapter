@@ -146,8 +146,8 @@ public class ODPFunctions {
     }
 
     private void updateAvailableParkingSpots() {
-        if(onStreetParkingDto.getTotalSpotNumber() - repository.getParkedCars(observationAreaPrefix) >= 0) {
-            int parkedCars = repository.getParkedCars(observationAreaPrefix);
+        int parkedCars = repository.getParkedCars(observationAreaPrefix);
+        if(onStreetParkingDto.getTotalSpotNumber() - parkedCars >= 0) {
             onStreetParkingDto.setAvailableParkingSpots(onStreetParkingDto.getTotalSpotNumber() - parkedCars);
         } else {
             onStreetParkingDto.setAvailableParkingSpots(0);
@@ -156,8 +156,8 @@ public class ODPFunctions {
     }
 
     private void updateDisabledParkingSpots() {
-        if(onStreetParkingDto.getDisabledSpotNumber() - repository.getParkedCars(disabledAreaPrefix) >= 0) {
-            int parkedCars = repository.getParkedCars(disabledAreaPrefix);
+        int parkedCars = repository.getParkedCars(disabledAreaPrefix);
+        if(onStreetParkingDto.getDisabledSpotNumber() - parkedCars >= 0) {
             onStreetParkingDto.setOccupiedDisabledSpotNumber(parkedCars);
         } else {
             onStreetParkingDto.setOccupiedDisabledSpotNumber(0);
