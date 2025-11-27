@@ -47,12 +47,14 @@ spec:
               value: {{ .Values.odp.password | quote }}
             - name: ODP_UPDATE_FREQUENCY
               value: {{ .Values.odp.update_frequency | quote }}
-            - name: ODP_PARKINGAREAID
-              value: {{ .Values.odp.parkingareaid | quote }}
-            - name: ODP_PARKINGAREAID.DEFAULTTOTAL
+            - name: ODP_SERVICEPATH
+              value: {{ .Values.odp.servicepath | quote }}
+            - name: ODP_PARKINGAREA_DEFAULTTOTAL
               value: {{ .Values.odp.defaulttotal | quote }}
-            - name: ANALYTICS_OBSERVATION_AREA
-              value: {{ .Values.odp.analytics_observation_area | quote }}
+            - name: ANALYTICS_OBSERVATION_AREA_PREFIX
+              value: {{ .Values.analytics.observation_area_prefix | quote }}
+            - name: ANALYTICS_DISABLED_AREA_PREFIX
+              value: {{ .Values.analytics.disabled_area_prefix | quote }}
             - name: SPRING_DATASOURCE_URL
               value: {{ .Values.analytics_db.url | quote }}
             - name: SPRING_DATASOURCE_USERNAME
