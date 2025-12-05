@@ -52,12 +52,16 @@ Wolfsburg's open data platform follows the Fiware standard and here is some back
 
 Get access token:
 ```bash
-curl -H application/x-www-form-urlencoded -d "realm=default" -d "client_id=api" -d "scope=entity:read entity:write" -d "username=username" -d "password=PASSWORD" -d "grant_type=password" "https://auth.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token"
+curl -H application/x-www-form-urlencoded -d "realm=default" -d "client_id=api" -d "scope=entity:read entity:write" -d "username=$ODP_USERNAME" -d "password=$ODP_PASSWORD" -d "grant_type=password" "https://auth.odp.staging.wolfsburg.digital/auth/realms/default/protocol/openid-connect/token"
 ```
 
 Get latest OffStreetParking data
 ```bash
-curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:MeckauerWeg/' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
+curl -X GET -H "Fiware-Service: Wolfsburg" -H "Fiware-ServicePath: /ParkingManagement/Meckauerweg" -H "Authorization: Bearer $KEYCLOAK_TOKEN" "https://api.odp.staging.wolfsburg.digital/context/v2/entities"
+```
+
+```bash
+curl -X GET -H "Fiware-Service: Wolfsburg" -H "Fiware-ServicePath: /ParkingManagement/Meckauerweg" -H "Authorization: Bearer $KEYCLOAK_TOKEN" "https://api.odp.staging.wolfsburg.digital/context/v2/entities/OnStreetParking:MeckauerWeg/"
 ```
 
 Update OffStreetParking data
@@ -77,7 +81,7 @@ curl --location --request PATCH 'https://api.odp.staging.wolfsburg.digital/conte
 
 Query ParkingSpots
 ```bash
-curl --location 'https://api.staging.wolfsburg.digital/context/v2/entities' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
+curl --location 'https://api.odp.staging.wolfsburg.digital/context/v2/entities' -H 'fiware-ServicePath: /ParkingManagement/Meckauerweg' -H 'fiware-service: Wolfsburg' -H 'Authorization: $KEYCLOAK_TOKEN'
 ```
 
 ## License & Contribution

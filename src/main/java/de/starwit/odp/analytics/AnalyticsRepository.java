@@ -18,7 +18,7 @@ public class AnalyticsRepository {
     
     private List<String> getObservationConfigs(String areaPrefix) {
         
-        String query = "SELECT name FROM public.metadata where classification = 'observe' AND name like :areaPrefix";
+        String query = "SELECT name FROM public.metadata where classification = 'observe' OR classification = 'flow' AND name like :areaPrefix";
         Query q = entityManager.createNativeQuery(query, String.class);
 
         q.setParameter("areaPrefix", areaPrefix + "%");
