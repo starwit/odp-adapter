@@ -160,7 +160,7 @@ public class ODPFunctions {
         if(onStreetParkingDto.getDisabledSpotNumber() - parkedCars >= 0) {
             onStreetParkingDto.setOccupiedDisabledSpotNumber(parkedCars);
         } else {
-            onStreetParkingDto.setOccupiedDisabledSpotNumber(0);
+            onStreetParkingDto.setOccupiedDisabledSpotNumber(onStreetParkingDto.getDisabledSpotNumber());
         }
         sendNumber("occupiedDisabledSpotNumber", onStreetParkingDto.getOccupiedDisabledSpotNumber());
     }
